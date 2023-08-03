@@ -43,8 +43,6 @@ public class Pistol : MonoSingleton<Pistol>
 
     private void Update()
     {
-        SetAim();
-        
         if (cdTime >= 0)
         {
             cdTime -= Time.deltaTime;
@@ -71,17 +69,25 @@ public class Pistol : MonoSingleton<Pistol>
         }
     }
 
-    public void Shoot()
+    public void Shoot(Vector3 position, Quaternion rotation)
     {
-        GameObject bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation);
+        SetAim();
+        GameObject bullet = PoolingManager.Instance.GetPooledObject(); 
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        
+        if (bullet != null) {
+            bullet.transform.position = position;
+            bullet.transform.rotation = rotation;
+            bullet.SetActive(true);
+        }
+        
         foreach (EffectBullet effectBullet in effectBullets)
         {
-            bullet.GetComponent<Bullet>().AddEffect(effectBullet);
+            bulletScript.AddEffect(effectBullet);
         }
-        Destroy(bullet, 5f);
     }
     
-    public void SetAim()
+    public void SetAim()                                                                                                                                                                                             
     {
         Ray ray = new Ray(_camera.transform.position, _camera.transform.forward);
         RaycastHit hit;

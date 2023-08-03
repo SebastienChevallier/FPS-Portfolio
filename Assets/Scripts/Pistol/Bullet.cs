@@ -53,7 +53,7 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("Untagged"))
         {
-            Destroy(gameObject);
+            transform.gameObject.SetActive(false);
         }
     }
 }

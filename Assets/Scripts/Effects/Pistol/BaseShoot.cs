@@ -11,11 +11,10 @@ public class BaseShoot : EffectPistol
         float delay = 0f;
         for (int i = 0; i < nbOfShoot; i++)
         {
-            StartCoroutine(Shoot(delay));
+            StartCoroutine(Shoot(delay, position, rotation));
             delay += 0.1f;
         }
-        
-        Pistol.Instance.Shoot();
+        Pistol.Instance.Shoot(position, rotation);
     }
 
     public override bool GetOrigin()
@@ -27,14 +26,14 @@ public class BaseShoot : EffectPistol
     {
         if (!once)
         {
-            Pistol.Instance.nbOfShoot += 0;
+            //Pistol.Instance.nbOfShoot += 0;
             once = true;
         }
     }
     
-    IEnumerator Shoot(float delay)
+    IEnumerator Shoot(float delay, Vector3 position, Quaternion rotation)
     {
         yield return new WaitForSeconds(delay);
-        Pistol.Instance.Shoot();
+        Pistol.Instance.Shoot(position, rotation);
     }
 }

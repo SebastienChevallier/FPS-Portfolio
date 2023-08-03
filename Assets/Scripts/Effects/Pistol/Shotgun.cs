@@ -19,8 +19,7 @@ public class Shotgun : EffectPistol
                 rotation.z + Random.Range(minDisper, maxDisper),
                 rotation.w);
             
-            GameObject bullet = Instantiate(prefab, position, rota);
-            Destroy(bullet, 5f);
+            Pistol.Instance.Shoot(position, rota);
         }
     }
 
