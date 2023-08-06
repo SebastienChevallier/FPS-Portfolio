@@ -15,13 +15,11 @@ public class Pistol : MonoSingleton<Pistol>
 
     [Header("Pistol Infos")] 
     public int ammo = 10;
-
+    public float rifleDelay = 0.1f;
     public int nbOfShoot = 0;
 
     private List<GameObject> bulletList;
     private float cdTime;
-    
-    
 
     [Header("Aim Infos")] 
     public AimConstraint _aimConstraint;
@@ -33,8 +31,6 @@ public class Pistol : MonoSingleton<Pistol>
     public List<EffectPistol> effectPistols;
     public List<EffectBullet> effectBullets;
 
-    
-    
     private void Start()
     {
         effectPistols = new List<EffectPistol>();
@@ -57,6 +53,7 @@ public class Pistol : MonoSingleton<Pistol>
 
     public void Fire(InputAction.CallbackContext context)
     {
+        SetAim();
         if (context.performed && ammo > 0 && cdTime < 0)
         {
             cdTime = fireRate;
@@ -72,33 +69,39 @@ public class Pistol : MonoSingleton<Pistol>
     public void Shoot(Vector3 position, Quaternion rotation)
     {
         SetAim();
-        GameObject bullet = PoolingManager.Instance.GetPooledObject(); 
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
-        
+        GameObject bullet = PoolingManager.Instance.GetPooledObject();
+
         if (bullet != null) {
-            bullet.transform.position = position;
+            Bullet bulletScript = bullet.GetComponent<Bullet>();
+            bullet.transform.position = SetAim().position;
             bullet.transform.rotation = rotation;
             bullet.SetActive(true);
-        }
-        
-        foreach (EffectBullet effectBullet in effectBullets)
-        {
-            bulletScript.AddEffect(effectBullet);
-        }
-    }
-    
-    public void SetAim()                                                                                                                                                                                             
-    {
-        Ray ray = new Ray(_camera.transform.position, _camera.transform.forward);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit, layerMask))
-        {
-            aim.transform.position = hit.point;
+            
+            foreach (EffectBullet effectBullet in effectBullets)
+            {
+                bulletScript.AddEffect(effectBullet);
+            }
         }
     }
 
+    public Transform SetAim()                                                                                                                                                                                             
+    {
+        Ray ray = new Ray(_camera.transform.position, _camera.transform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit,layerMask))
+        {
+            aim.transform.position = hit.point;
+            hitPoint = hit.point;
+            Debug.Log("Touch");
+        }
+        return bulletOrigin;
+    }
     
-    
-   
+    public Vector3 hitPoint;
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(hitPoint, 0.5f); 
+    }
 }
