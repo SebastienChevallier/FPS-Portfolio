@@ -24,12 +24,11 @@ public class Bullet : MonoBehaviour
     private void OnEnable()
     {
         _rb = GetComponent<Rigidbody>();
+        _rb.velocity = Vector3.zero;
         _trail = GetComponent<TrailRenderer>();
         ResetBulletInfo();
-        StartCoroutine(WaitForDestroy(10f));
+        Invoke("Destroy", 10f);
         _trail.Clear();
-        
-        //Debug.Break();
     }
 
     private void Start()
@@ -64,17 +63,17 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    IEnumerator WaitForDestroy(float t)
+    public void Destroy()
     {
-        yield return new WaitForSeconds(t);
         transform.gameObject.SetActive(false);
     }
     public void ResetBulletInfo()
     {
-        bulletSpeed = 1500;
+        bulletSpeed = 500;
         speedMultiplier = 1;
         bulletDMG = 10;
         DMGMultiplier = 1;
+        
     }
 
     public void AddEffect(EffectBullet effectBullet)

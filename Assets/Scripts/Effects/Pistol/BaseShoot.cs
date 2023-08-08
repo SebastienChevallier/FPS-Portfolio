@@ -8,7 +8,7 @@ public class BaseShoot : EffectPistol
     public override void Effect(GameObject prefab, Vector3 position, Quaternion rotation, int nbOfShoot)
     {
         Once();
-        Pistol.Instance.Shoot(position, rotation);
+        Pistol.Instance.Shoot(position, Pistol.Instance.SetAim().rotation);
     }
 
     public override bool GetOrigin()
