@@ -26,29 +26,39 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _rb.velocity = Vector3.zero;
         _trail = GetComponent<TrailRenderer>();
-        ResetBulletInfo();
         Invoke("Destroy", 10f);
         _trail.Clear();
     }
 
-    private void Start()
+    private void OnDisable()
     {
-        foreach (EffectBullet effectBullet in _effectBullets)
+        ResetBulletInfo();
+    }
+
+    public void ApplyEffects()
+    {
+        if (_effectBullets != null)
         {
-            if (effectBullet.onStart)
+            foreach (EffectBullet effectBullet in _effectBullets)
             {
-                effectBullet.Effect(this);
+                if (effectBullet.onStart)
+                {
+                    effectBullet.Effect(this);
+                }
             }
         }
     }
     
     void Update()
     {
-        foreach (EffectBullet effectBullet in _effectBullets)
+        if (_effectBullets != null)
         {
-            if (!effectBullet.onStart)
+            foreach (EffectBullet effectBullet in _effectBullets)
             {
-                effectBullet.Effect(this);
+                if (!effectBullet.onStart)
+                {
+                    effectBullet.Effect(this);
+                }
             }
         }
         
@@ -69,11 +79,13 @@ public class Bullet : MonoBehaviour
     }
     public void ResetBulletInfo()
     {
-        bulletSpeed = 500;
+        bulletSpeed = 1000;
         speedMultiplier = 1;
         bulletDMG = 10;
         DMGMultiplier = 1;
         
+        _effectBullets.Clear();
+        _effectBullets = new List<EffectBullet>();
     }
 
     public void AddEffect(EffectBullet effectBullet)

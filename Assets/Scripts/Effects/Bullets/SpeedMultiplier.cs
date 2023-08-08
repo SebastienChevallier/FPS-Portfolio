@@ -15,5 +15,6 @@ public class SpeedMultiplier : EffectBullet
     public override void Effect(Bullet bullet)
     {
         bullet.speedMultiplier += multiplier;
+        Debug.Log("SpeedMultiply");
     }
 }

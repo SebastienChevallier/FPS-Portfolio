@@ -12,17 +12,16 @@ public class Pistol : MonoSingleton<Pistol>
     public GameObject bulletPrefab;
     public Transform bulletOrigin;
     public float fireRate;
+    private bool isPerformed = false;
 
     [Header("Pistol Infos")] 
     public int ammo = 10;
-    public float rifleDelay = 0.1f;
     public int nbOfShoot = 0;
 
     private List<GameObject> bulletList;
     private float cdTime;
 
     [Header("Aim Infos")] 
-    public AimConstraint _aimConstraint;
     public GameObject aim;
     public LayerMask layerMask;
     private Camera _camera;
@@ -43,19 +42,10 @@ public class Pistol : MonoSingleton<Pistol>
         {
             cdTime -= Time.deltaTime;
         }
-    }
 
-    public void AddEffect(EffectPistol effectPistol)
-    {
-        effectPistols.Add(effectPistol);
-        effectPistol.Once();
-    }
-
-    public void Fire(InputAction.CallbackContext context)
-    {
-        SetAim();
-        if (context.performed && ammo > 0 && cdTime < 0)
+        if (isPerformed && ammo > 0 && cdTime < 0)
         {
+            SetAim();
             cdTime = fireRate;
             ammo--;
             
@@ -66,21 +56,36 @@ public class Pistol : MonoSingleton<Pistol>
         }
     }
 
+    public void AddEffect(EffectPistol effectPistol)
+    {
+        effectPistols.Add(effectPistol);
+        effectPistol.Once();
+    }
+
+    public void Fire(InputAction.CallbackContext context)
+    {
+        if (context.started) isPerformed = true;
+        if (context.canceled) isPerformed = false;
+
+    }
+
     public void Shoot(Vector3 position, Quaternion rotation)
     {
-        SetAim();
         GameObject bullet = PoolingManager.Instance.GetPooledObject();
 
         if (bullet != null) {
             Bullet bulletScript = bullet.GetComponent<Bullet>();
             bullet.transform.position = SetAim().position;
             bullet.transform.rotation = rotation;
-            bullet.SetActive(true);
+            
             
             foreach (EffectBullet effectBullet in effectBullets)
             {
                 bulletScript.AddEffect(effectBullet);
             }
+            
+            bullet.SetActive(true);
+            bulletScript.ApplyEffects();
         }
     }
 
@@ -93,7 +98,6 @@ public class Pistol : MonoSingleton<Pistol>
         {
             aim.transform.position = hit.point;
             hitPoint = hit.point;
-            Debug.Log("Touch");
         }
         return bulletOrigin;
     }

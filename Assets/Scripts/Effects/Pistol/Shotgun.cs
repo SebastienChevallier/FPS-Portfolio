@@ -11,7 +11,7 @@ public class Shotgun : EffectPistol
     public override void Effect(GameObject prefab, Vector3 position, Quaternion rotation, int nbOfShoot)
     {
         Once();
-        for (int i = 0; i < nbOfBullet; i++)
+        for (int i = 0; i < nbOfBullet * nbOfShoot; i++)
         {
             rotation = Pistol.Instance.SetAim().rotation;
             Quaternion rota = new Quaternion(

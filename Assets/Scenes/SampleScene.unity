@@ -4059,6 +4059,11 @@ PrefabInstance:
       propertyPath: nbOfShoot
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: -8010209591447161958, guid: 4fa23df11b4196748a1649cd5f0f7c88,
+        type: 3}
+      propertyPath: rifleDelay
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6168237415492032405, guid: 4fa23df11b4196748a1649cd5f0f7c88,
         type: 3}
       propertyPath: m_RootOrder
@@ -4451,6 +4456,11 @@ PrefabInstance:
         type: 3}
       propertyPath: nbOfShoot
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8010209591447161958, guid: 4fa23df11b4196748a1649cd5f0f7c88,
+        type: 3}
+      propertyPath: rifleDelay
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6168237415492032405, guid: 4fa23df11b4196748a1649cd5f0f7c88,
         type: 3}
@@ -6677,12 +6687,11 @@ MonoBehaviour:
   bulletOrigin: {fileID: 1674279688}
   fireRate: 0.1
   ammo: 9999
-  rifleDelay: 0.1
   nbOfShoot: 0
-  _aimConstraint: {fileID: 1674279689}
   aim: {fileID: 1801317742}
   layerMask:
     serializedVersion: 2
     m_Bits: 64
   effectPistols: []
   effectBullets: []
+  hitPoint: {x: 0, y: 0, z: 0}
