@@ -6,16 +6,16 @@ namespace BaseTemplate.Behaviours
 {
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
-        private static T s_Instance;
-        private static readonly object s_Lock = new object();
+        private static T _sInstance;
+        private static readonly object SLock = new object();
 
         public static T Instance
         {
             get
             {
-                lock (s_Lock)
+                lock (SLock)
                 {
-                    if (s_Instance == null)
+                    if (_sInstance == null)
                     {   
                         Object[] instances = FindObjectsOfType(typeof(T));
 
@@ -30,10 +30,10 @@ namespace BaseTemplate.Behaviours
                             return null;
                         }
 
-                        s_Instance = (T)instances[0];
+                        _sInstance = (T)instances[0];
                     }
 
-                    return s_Instance;
+                    return _sInstance;
                 }
             }
         }

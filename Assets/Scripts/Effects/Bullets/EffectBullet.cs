@@ -14,4 +14,10 @@ public class EffectBullet : MonoBehaviour
     {
         
     }
+
+    public virtual void Collision(Collider col, GameObject bullet)
+    {
+        Debug.Log("NormalCollision");
+        bullet.transform.gameObject.SetActive(false);
+    }
 }

@@ -6,21 +6,21 @@ namespace OccaSoftware.Crosshairs.Editor
     public class StartMenu : EditorWindow
     {
         // Source for UUID: https://shortunique.id/
-        private static string modalId = "ShowCrosshairsModal=qtN0wW";
-        private Texture2D logo;
-        private GUIStyle header,
-            button,
-            contentSection;
-        private GUILayoutOption[] contentLayoutOptions;
-        private static bool listenToEditorUpdates;
-        private static StartMenu startMenu;
+        private static string _modalId = "ShowCrosshairsModal=qtN0wW";
+        private Texture2D _logo;
+        private GUIStyle _header,
+            _button,
+            _contentSection;
+        private GUILayoutOption[] _contentLayoutOptions;
+        private static bool _listenToEditorUpdates;
+        private static StartMenu _startMenu;
 
         [MenuItem("OccaSoftware/Start Menu (Crosshairs)")]
         public static void SetupMenu()
         {
-            startMenu = CreateWindow();
-            CenterWindowInEditor(startMenu);
-            LoadLogo(startMenu);
+            _startMenu = CreateWindow();
+            CenterWindowInEditor(_startMenu);
+            LoadLogo(_startMenu);
         }
 
         [InitializeOnLoadMethod]
@@ -31,9 +31,9 @@ namespace OccaSoftware.Crosshairs.Editor
 
         void OnGUI()
         {
-            SetupHeaderStyle(startMenu);
-            SetupButtonStyle(startMenu);
-            SetupContentSectionStyle(startMenu);
+            SetupHeaderStyle(_startMenu);
+            SetupButtonStyle(_startMenu);
+            SetupContentSectionStyle(_startMenu);
 
             DrawHeader();
             DrawReviewRequest();
@@ -62,7 +62,7 @@ namespace OccaSoftware.Crosshairs.Editor
 
         private static void LoadLogo(StartMenu startMenu)
         {
-            startMenu.logo = (Texture2D)
+            startMenu._logo = (Texture2D)
                 AssetDatabase.LoadAssetAtPath(
                     "Assets/OccaSoftware/Crosshairs/Editor/Textures/Logo.png",
                     typeof(Texture2D)
@@ -71,26 +71,26 @@ namespace OccaSoftware.Crosshairs.Editor
 
         private static void SetupHeaderStyle(StartMenu startMenu)
         {
-            startMenu.header = new GUIStyle(EditorStyles.boldLabel);
-            startMenu.header.fontSize = 18;
-            startMenu.header.wordWrap = true;
-            startMenu.header.padding = new RectOffset(0, 0, 0, 0);
+            startMenu._header = new GUIStyle(EditorStyles.boldLabel);
+            startMenu._header.fontSize = 18;
+            startMenu._header.wordWrap = true;
+            startMenu._header.padding = new RectOffset(0, 0, 0, 0);
         }
 
         private static void SetupButtonStyle(StartMenu startMenu)
         {
-            startMenu.button = new GUIStyle("button");
-            startMenu.button.fontSize = 18;
-            startMenu.button.fontStyle = FontStyle.Bold;
-            startMenu.button.fixedHeight = 40;
+            startMenu._button = new GUIStyle("button");
+            startMenu._button.fontSize = 18;
+            startMenu._button.fontStyle = FontStyle.Bold;
+            startMenu._button.fixedHeight = 40;
         }
 
         private static void SetupContentSectionStyle(StartMenu startMenu)
         {
-            startMenu.contentSection = new GUIStyle("label");
-            startMenu.contentSection.margin = new RectOffset(20, 20, 20, 20);
-            startMenu.contentSection.padding = new RectOffset(0, 0, 0, 0);
-            startMenu.contentLayoutOptions = new GUILayoutOption[] { GUILayout.MinWidth(230) };
+            startMenu._contentSection = new GUIStyle("label");
+            startMenu._contentSection.margin = new RectOffset(20, 20, 20, 20);
+            startMenu._contentSection.padding = new RectOffset(0, 0, 0, 0);
+            startMenu._contentLayoutOptions = new GUILayoutOption[] { GUILayout.MinWidth(230) };
         }
         #endregion
 
@@ -98,9 +98,9 @@ namespace OccaSoftware.Crosshairs.Editor
         #region Modal Handler
         private static void RegisterModal()
         {
-            if (!listenToEditorUpdates && !EditorApplication.isPlayingOrWillChangePlaymode)
+            if (!_listenToEditorUpdates && !EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                listenToEditorUpdates = true;
+                _listenToEditorUpdates = true;
                 EditorApplication.update += PopModal;
             }
         }
@@ -109,10 +109,10 @@ namespace OccaSoftware.Crosshairs.Editor
         {
             EditorApplication.update -= PopModal;
 
-            bool showModal = EditorPrefs.GetBool(modalId, true);
+            bool showModal = EditorPrefs.GetBool(_modalId, true);
             if (showModal)
             {
-                EditorPrefs.SetBool(modalId, false);
+                EditorPrefs.SetBool(_modalId, false);
                 SetupMenu();
             }
         }
@@ -123,25 +123,25 @@ namespace OccaSoftware.Crosshairs.Editor
         #region UI Drawer
         private void DrawHeader()
         {
-            GUILayout.BeginVertical(contentSection, contentLayoutOptions);
+            GUILayout.BeginVertical(_contentSection, _contentLayoutOptions);
             GUIStyle logoStyle = new GUIStyle("label");
             GUILayoutOption[] logoOptions = new GUILayoutOption[] { GUILayout.Width(230) };
             logoStyle.padding = new RectOffset(0, 0, 0, 0);
             logoStyle.margin = new RectOffset(0, 0, 0, 0);
             logoStyle.alignment = TextAnchor.MiddleCenter;
-            GUILayout.Label(logo, logoStyle, logoOptions);
+            GUILayout.Label(_logo, logoStyle, logoOptions);
             GUILayout.EndVertical();
         }
 
         private void DrawReviewRequest()
         {
-            GUILayout.BeginVertical(contentSection, contentLayoutOptions);
-            GUILayout.Label("What do you think about my free Crosshair pack?", header);
+            GUILayout.BeginVertical(_contentSection, _contentLayoutOptions);
+            GUILayout.Label("What do you think about my free Crosshair pack?", _header);
 
             if (
                 GUILayout.Button(
                     "Leave a review",
-                    button,
+                    _button,
                     new GUILayoutOption[] { GUILayout.MaxWidth(300) }
                 )
             )
@@ -153,8 +153,8 @@ namespace OccaSoftware.Crosshairs.Editor
 
         private void DrawHelpLinks()
         {
-            GUILayout.BeginVertical(contentSection, contentLayoutOptions);
-            GUILayout.Label("I am here to help.", header);
+            GUILayout.BeginVertical(_contentSection, _contentLayoutOptions);
+            GUILayout.Label("I am here to help.", _header);
             if (EditorGUILayout.LinkButton("Website"))
             {
                 Application.OpenURL("https://www.occasoftware.com/assets/crosshairs");
@@ -169,9 +169,9 @@ namespace OccaSoftware.Crosshairs.Editor
 
         private void DrawUpgradeLinks()
         {
-            GUILayout.BeginVertical(contentSection, contentLayoutOptions);
+            GUILayout.BeginVertical(_contentSection, _contentLayoutOptions);
 
-            GUILayout.Label("Make your game a success.", header);
+            GUILayout.Label("Make your game a success.", _header);
             if (EditorGUILayout.LinkButton("Upgrade to Crosshairs Pro"))
             {
                 Application.OpenURL("https://assetstore.unity.com/packages/slug/239049");

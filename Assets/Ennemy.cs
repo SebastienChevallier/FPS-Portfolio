@@ -19,12 +19,18 @@ public class Ennemy : MonoBehaviour
         if (other.CompareTag("Bullet"))
         {
             Bullet bullet = other.GetComponent<Bullet>();
-            float dmg = bullet.bulletDMG * bullet.DMGMultiplier;
-            TakeDMG(dmg);
+            float dmg = bullet.bulletDmg * bullet.dmgMultiplier;
+            TakeDmg(dmg);
+        }
+
+        if (other.CompareTag("Explosion"))
+        {
+            Explosion explosion = other.GetComponent<Explosion>();
+            TakeDmg(explosion.explosionDamage);
         }
     }
 
-    public void TakeDMG(float dmg)
+    public void TakeDmg(float dmg)
     {
         Debug.Log("Hit : " + dmg );
         if (dmg < health)

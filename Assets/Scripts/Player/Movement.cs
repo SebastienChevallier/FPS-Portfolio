@@ -8,12 +8,12 @@ using UnityEngine.InputSystem;
 public class Movement : MonoSingleton<Movement>
 {
     
-    private CharacterController controller;
-    private Camera cam;
-    private float xRotation, yRotation;
-    private Vector3 direction, dir;
-    private float speedMultiply = 1f;
-    private Quaternion rotation;
+    [HideInInspector]public CharacterController _controller;
+    private Camera _cam;
+    private float _xRotation, _yRotation;
+    private Vector3 _direction, _dir;
+    private float _speedMultiply = 1f;
+    private Quaternion _rotation;
     
     [Header("Parameters")]
     public float speed;
@@ -28,48 +28,48 @@ public class Movement : MonoSingleton<Movement>
 
     private void Start()
     {
-        controller = GetComponent<CharacterController>();
-        cam = GetComponentInChildren<Camera>();
+        _controller = GetComponent<CharacterController>();
+        _cam = GetComponentInChildren<Camera>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void Update()
     {
-        direction = transform.forward * dir.y + cam.transform.right * dir.x;
-        direction *= speedMultiply;
-        direction.y = yVelocity;
-        controller.Move(direction * (speed * Time.deltaTime));
+        _direction = transform.forward * _dir.y + _cam.transform.right * _dir.x;
+        _direction *= _speedMultiply;
+        _direction.y = yVelocity;
+        _controller.Move(_direction * (speed * Time.deltaTime));
         ApplyGravity();
     }
 
     public void Move(InputAction.CallbackContext context)
     {
-        dir = context.ReadValue<Vector2>();
+        _dir = context.ReadValue<Vector2>();
     }
 
     public void Aim(InputAction.CallbackContext context)
     {
         Vector2 mouseMove = context.ReadValue<Vector2>();
 
-        xRotation += mouseMove.x * Time.deltaTime * xSensitivity;
-        yRotation -= mouseMove.y * Time.deltaTime * ySensitivity;
-        yRotation = Mathf.Clamp(yRotation, -75, 75);
+        _xRotation += mouseMove.x * Time.deltaTime * xSensitivity;
+        _yRotation -= mouseMove.y * Time.deltaTime * ySensitivity;
+        _yRotation = Mathf.Clamp(_yRotation, -90, 90);
         
-        transform.rotation = Quaternion.Euler(0,xRotation,0);
-        cam.transform.localRotation = Quaternion.Euler(yRotation,0,0);
+        transform.rotation = Quaternion.Euler(0,_xRotation,0);
+        _cam.transform.localRotation = Quaternion.Euler(_yRotation,0,0);
     }
 
     public void Run(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            speedMultiply = 2.5f;
+            _speedMultiply = 2.5f;
         }
 
         if (context.canceled)
         {
-            speedMultiply = 1f;
+            _speedMultiply = 1f;
         }
     }
 
@@ -87,6 +87,6 @@ public class Movement : MonoSingleton<Movement>
         else yVelocity += gravity * Time.deltaTime;
     }
     
-    public bool IsGrounded() => controller.isGrounded;
+    public bool IsGrounded() => _controller.isGrounded;
 
 }

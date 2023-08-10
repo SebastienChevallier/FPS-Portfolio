@@ -3,36 +3,31 @@ using UnityEngine;
 
 public class Raffale : EffectPistol
 {
-    public int nbOfShoot;
-    private bool once = false;
-    public float rifleDelay = 1f;
+    public int bulletsPerBurst = 3; 
+    private bool _once = false;
+    public float timeBetweenBullets = 0.2f; 
+    public float burstInterval = 1.0f;
+    private bool isShooting;
 
-    public override void Effect(GameObject prefab, Vector3 position, Quaternion rotation, int nb)
+    public override void Effect(Vector3 position, Quaternion rotation, int nb)
     {
         Once();
-        float delay = 0f;
-        for (int i = 0; i < nbOfShoot; i++)
-        {
-            StartCoroutine(Rifle(delay, position));
-            delay += rifleDelay;
-        }
+        StartCoroutine(ShootBurst(position, rotation));
     }
 
-    IEnumerator Rifle(float delay, Vector3 position)
+    IEnumerator ShootBurst(Vector3 position, Quaternion rotation)
     {
-        yield return new WaitForSeconds(delay);
-        Quaternion rotation = Pistol.Instance.SetAim().rotation;
-        Pistol.Instance.Shoot(position, rotation);
-    }
-
-    public override void Once()
-    {
-        if (!once)
+        isShooting = true;
+        for (int i = 0; i < bulletsPerBurst; i++)
         {
-            Pistol.Instance.nbOfShoot += nbOfShoot;
-            once = true;
-        }
+            if (Pistol.Instance.ammo <= 0){ yield break; }
+
+            rotation = Pistol.Instance.SetAim().rotation;
+            position = Pistol.Instance.SetAim().position;
+            Shoot(position, rotation);
+            yield return new WaitForSeconds(timeBetweenBullets);
+        } 
+        yield return new WaitForSeconds(burstInterval);
+        isShooting = false;
     }
-    
-    
 }

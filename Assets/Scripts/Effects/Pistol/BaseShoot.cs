@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class BaseShoot : EffectPistol
 {
-    private bool once = false;
-    public override void Effect(GameObject prefab, Vector3 position, Quaternion rotation, int nbOfShoot)
+    private bool _once = false;
+    public override void Effect(Vector3 position, Quaternion rotation, int nbOfShoot)
     {
         Once();
-        Pistol.Instance.Shoot(position, Pistol.Instance.SetAim().rotation);
+        Shoot(position, Pistol.Instance.SetAim().rotation);
     }
 
     public override bool GetOrigin()
@@ -18,10 +18,10 @@ public class BaseShoot : EffectPistol
     
     public override void Once()
     {
-        if (!once)
+        if (!_once)
         {
             Pistol.Instance.nbOfShoot += 1;
-            once = true;
+            _once = true;
         }
     }
 }

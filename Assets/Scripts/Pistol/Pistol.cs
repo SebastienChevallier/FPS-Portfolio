@@ -1,25 +1,23 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using BaseTemplate.Behaviours;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
 public class Pistol : MonoSingleton<Pistol>
 {
     [Header("Basics")]
-    public GameObject bulletPrefab;
     public Transform bulletOrigin;
     public float fireRate;
-    private bool isPerformed = false;
+    private bool _isPerformed = false;
 
     [Header("Pistol Infos")] 
     public int ammo = 10;
+    public int maxAmmo = 10;
+    public float timeForReload = 2f;
     public int nbOfShoot = 0;
-
-    private List<GameObject> bulletList;
-    private float cdTime;
+    private float _cdTime;
+    
 
     [Header("Aim Infos")] 
     public GameObject aim;
@@ -34,68 +32,79 @@ public class Pistol : MonoSingleton<Pistol>
     {
         effectPistols = new List<EffectPistol>();
         _camera = Camera.main;
+        UIManager.Instance.ChangeAmmoText(ammo.ToString());
     }
 
     private void Update()
     {
-        if (cdTime >= 0)
+        //CoolDown entre les tirs
+        if (_cdTime >= 0)
         {
-            cdTime -= Time.deltaTime;
+            _cdTime -= Time.deltaTime;
+            
         }
-
-        if (isPerformed && ammo > 0 && cdTime < 0)
+        else
         {
             SetAim();
-            cdTime = fireRate;
-            ammo--;
-            
-            foreach (EffectPistol effect in effectPistols)
-            {
-                effect.Effect(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation, nbOfShoot);
-            }
         }
+
+        if (_isPerformed && ammo <= 0)
+        {
+            StartCoroutine(Reload());
+        }
+    }
+
+    public IEnumerator Reload()
+    {
+        yield return new WaitForSeconds(timeForReload);
+        ammo = maxAmmo;
+        UIManager.Instance.ChangeAmmoText(ammo.ToString());
     }
 
     public void AddEffect(EffectPistol effectPistol)
     {
+        //Ajoute un effet de tir
         effectPistols.Add(effectPistol);
         effectPistol.Once();
     }
 
     public void Fire(InputAction.CallbackContext context)
     {
-        if (context.started) isPerformed = true;
-        if (context.canceled) isPerformed = false;
-
-    }
-
-    public void Shoot(Vector3 position, Quaternion rotation)
-    {
-        GameObject bullet = PoolingManager.Instance.GetPooledObject();
-
-        if (bullet != null) {
-            Bullet bulletScript = bullet.GetComponent<Bullet>();
-            bullet.transform.position = SetAim().position;
-            bullet.transform.rotation = rotation;
+        //Listener du bouton de tir
+        if (context.started)
+        {
+            SetAim();
+            _isPerformed = true;
+        }
             
+        if (context.canceled)
+            _isPerformed = false;
+        
+        //Tirs
+        if (context.performed && ammo > 0 && _cdTime < 0)
+        {
+            //Calcul de la visée, Reset du CD de tir et deduction d'une balle
+            SetAim();
+            _cdTime = fireRate;
             
-            foreach (EffectBullet effectBullet in effectBullets)
+            //Application differents effets de tirs
+            foreach (EffectPistol effect in effectPistols)
             {
-                bulletScript.AddEffect(effectBullet);
+                effect.Effect(bulletOrigin.position, bulletOrigin.rotation, nbOfShoot);
             }
-            
-            bullet.SetActive(true);
-            bulletScript.ApplyEffects();
         }
     }
 
+
     public Transform SetAim()                                                                                                                                                                                             
     {
+        //Tir d'un rayon
         Ray ray = new Ray(_camera.transform.position, _camera.transform.forward);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit,layerMask))
         {
+            //Ajustement de notre Aim en fonction du hitPoint, fonctionne avec un AimConstraint
             aim.transform.position = hit.point;
             hitPoint = hit.point;
         }

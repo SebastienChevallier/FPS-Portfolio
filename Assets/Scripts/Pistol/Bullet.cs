@@ -1,6 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -11,22 +10,19 @@ public class Bullet : MonoBehaviour
     [Header("Bullet Stats")]
     public float bulletSpeed;
     public float speedMultiplier;
-    public float bulletDMG;
-    public float DMGMultiplier;
+     public float bulletDmg;
+    public float dmgMultiplier;
     
     private Rigidbody _rb;
     
     [Header("Bullet Effects")]
-    public List<EffectBullet> _effectBullets;
-
-    
+    public List<EffectBullet> effectBullets;
 
     private void OnEnable()
     {
         _rb = GetComponent<Rigidbody>();
         _rb.velocity = Vector3.zero;
         _trail = GetComponent<TrailRenderer>();
-        Invoke("Destroy", 10f);
         _trail.Clear();
     }
 
@@ -37,9 +33,9 @@ public class Bullet : MonoBehaviour
 
     public void ApplyEffects()
     {
-        if (_effectBullets != null)
+        if (effectBullets != null)
         {
-            foreach (EffectBullet effectBullet in _effectBullets)
+            foreach (EffectBullet effectBullet in effectBullets)
             {
                 if (effectBullet.onStart)
                 {
@@ -51,9 +47,9 @@ public class Bullet : MonoBehaviour
     
     void Update()
     {
-        if (_effectBullets != null)
+        if (effectBullets != null)
         {
-            foreach (EffectBullet effectBullet in _effectBullets)
+            foreach (EffectBullet effectBullet in effectBullets)
             {
                 if (!effectBullet.onStart)
                 {
@@ -69,7 +65,16 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("Untagged"))
         {
-            transform.gameObject.SetActive(false);
+            if (effectBullets != null)
+            {
+                foreach (EffectBullet effectBullet in effectBullets.ToList())
+                {
+                    if (!effectBullet.onStart)
+                    {
+                        effectBullet.Collision(other, gameObject);
+                    }
+                }
+            }
         }
     }
 
@@ -77,20 +82,21 @@ public class Bullet : MonoBehaviour
     {
         transform.gameObject.SetActive(false);
     }
+    
     public void ResetBulletInfo()
     {
         bulletSpeed = 1000;
         speedMultiplier = 1;
-        bulletDMG = 10;
-        DMGMultiplier = 1;
+        bulletDmg = 10;
+        dmgMultiplier = 1;
         
-        _effectBullets.Clear();
-        _effectBullets = new List<EffectBullet>();
+        effectBullets.Clear();
+        effectBullets = new List<EffectBullet>();
     }
 
     public void AddEffect(EffectBullet effectBullet)
     {
-        _effectBullets.Add(effectBullet);
+        effectBullets.Add(effectBullet);
     }
     
 }
